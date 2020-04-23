@@ -35,16 +35,16 @@
 
 //Color-Constants
 const unsigned int COLORS[9][3] =
-    {
-        {255, 255, 255}, //White
-        {255, 0, 0},     //Red
-        {0, 255, 0},     //Green
-        {0, 0, 255},     //Blue
-        {255, 255, 0},   //Yellow
-        {0, 255, 255},   //Cyan
-        {255, 0, 255},   //Pink
-        {255, 102, 0},   //Orange
-        {102, 0, 204}    //Purple
+{
+  {255, 255, 255}, //White
+  {255, 0, 0},     //Red
+  {0, 255, 0},     //Green
+  {0, 0, 255},     //Blue
+  {255, 255, 0},   //Yellow
+  {0, 255, 255},   //Cyan
+  {255, 0, 255},   //Pink
+  {255, 102, 0},   //Orange
+  {102, 0, 204}    //Purple
 };
 
 //Color-Name-Constants
@@ -147,88 +147,89 @@ void loop()
 
   switch (menuMode)
   {
-  case 0: //Single_Color
-    pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
-    pixels.show();
-    while (!buttonCheckDelay(100))
-    {
-    }
-    break;
-  case 1: //Racing_Pixels (1 Pixel)
-    racingPixels(1);
-    break;
-  case 2: //Racing_Pixels (3 Pixel)
-    racingPixels(3);
-    break;
-  case 3: //Racing_Pixels (5 Pixel)
-    racingPixels(5);
-    break;
-  case 4: //Racing_Pixels_Random (1 Pixel)
-    racingPixelsRandom(1);
-    break;
-  case 5: //Racing_Pixels_Random (3 Pixel)
-    racingPixelsRandom(3);
-    break;
-  case 6: //Racing_Pixels_Random (5 Pixel)
-    racingPixelsRandom(5);
-    break;
-  case 7: //Strobo
-    while (!buttonCheckDelay(0))
-    {
-      //For random-color-function
-      if (randomColor != -1)
-      {
-        randomColor = random(0, 8);
-        menuColor = randomColor;
-      }
-
-      for (unsigned int i = 0; i < LED_COUNT; i++)
-      {
-        pixels.setPixelColor(i, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
-      }
-
+    case 0: //Single_Color
+      pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
       pixels.show();
-      if (buttonCheckDelay(SPEEDS[menuSpeed]))
+      while (!buttonCheckDelay(100))
       {
-        break;
       }
-
-      pixels.clear();
-      pixels.show();
-      if (buttonCheckDelay(SPEEDS[menuSpeed]))
+      break;
+    case 1: //Racing_Pixels (1 Pixel)
+      racingPixels(1);
+      break;
+    case 2: //Racing_Pixels (3 Pixel)
+      racingPixels(3);
+      break;
+    case 3: //Racing_Pixels (5 Pixel)
+      racingPixels(5);
+      break;
+    case 4: //Racing_Pixels_Random (1 Pixel)
+      racingPixelsRandom(1);
+      break;
+    case 5: //Racing_Pixels_Random (3 Pixel)
+      racingPixelsRandom(3);
+      break;
+    case 6: //Racing_Pixels_Random (5 Pixel)
+      racingPixelsRandom(5);
+      break;
+    case 7: //Strobo
+      while (!buttonCheckDelay(0))
       {
-        break;
-      }
-    }
-    break;
-  case 8: //Rainbow
-    for (unsigned int r = 0; r < LED_COUNT; r++)
-    {
-      pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
-    }
-    pixels.show();
+        //For random-color-function
+        if (randomColor != -1)
+        {
+          randomColor = random(0, 8);
+          menuColor = randomColor;
+        }
 
-    while (!buttonCheckDelay(100))
-    {
-    }
-    break;
-  case 9: //Rainbow_Refresh
-    while (!buttonCheckDelay(SPEEDS[menuSpeed]))
-    {
+        for (unsigned int i = 0; i < LED_COUNT; i++)
+        {
+          pixels.setPixelColor(i, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+        }
+
+        pixels.show();
+        if (buttonCheckDelay(SPEEDS[menuSpeed]))
+        {
+          break;
+        }
+
+        pixels.clear();
+        pixels.show();
+        if (buttonCheckDelay(SPEEDS[menuSpeed]))
+        {
+          break;
+        }
+      }
+      break;
+    case 8: //Rainbow
       for (unsigned int r = 0; r < LED_COUNT; r++)
       {
         pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
       }
       pixels.show();
 
+      while (!buttonCheckDelay(100))
+      {
+      }
       break;
-    }
+    case 9: //Rainbow_Refresh
+      while (!buttonCheckDelay(SPEEDS[menuSpeed]))
+      {
+        for (unsigned int r = 0; r < LED_COUNT; r++)
+        {
+          pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
+        }
+        pixels.show();
 
-    if (menuColor != randomColor && randomColor != -1)
-    {
-      randomColor = -1;
-      menuColor = 0;
-    }
+        break;
+      }
+  }
+
+  if (menuColor != randomColor && randomColor != -1)
+  {
+    Serial.println("Reset Random");
+    randomColor = -1;
+    menuColor = 0;
   }
 }
 

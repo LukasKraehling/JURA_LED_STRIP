@@ -53,7 +53,7 @@ const String COLOR_NAMES[10] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[23] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch [4]", "Strobo Seg. Switch [8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Left", "Stacking Right", "Stacking Both Sides", "Stacking Middle", "Music"};
+const String MODE_NAMES[24] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch [4]", "Strobo Seg. Switch [8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Left", "Stacking Right", "Stacking Both Sides", "Stacking Middle", "Music"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -156,22 +156,22 @@ void loop()
     }
     break;
   case 1: //Racing_Pixels (1 Pixel)
-    racingPixels(1);
+    racingPixels(1, false);
     break;
   case 2: //Racing_Pixels (3 Pixel)
-    racingPixels(3);
+    racingPixels(3, false);
     break;
   case 3: //Racing_Pixels (5 Pixel)
-    racingPixels(5);
+    racingPixels(5, false);
     break;
-  case 4: //Racing_Pixels_Random (1 Pixel)
-    racingPixelsRandom(1);
+  case 4: //Racing_Pixels - Random color per pixel-segment (1 Pixel)
+    racingPixels(1, true);
     break;
-  case 5: //Racing_Pixels_Random (3 Pixel)
-    racingPixelsRandom(3);
+  case 5: //Racing_Pixels - Random color per pixel-segment (3 Pixel)
+    racingPixels(3, true);
     break;
-  case 6: //Racing_Pixels_Random (5 Pixel)
-    racingPixelsRandom(5);
+  case 6: //Racing_Pixels - Random color per pixel-segment (5 Pixel)
+    racingPixels(5, true);
     break;
   case 7: //Strobo
     while (!buttonCheckDelay(0))
@@ -234,7 +234,7 @@ void loop()
   }
 }
 
-void racingPixels(unsigned int pixelAmount)
+void racingPixels(unsigned int pixelAmount, boolean randomColorEach)
 {
   while (true)
   {
@@ -247,6 +247,11 @@ void racingPixels(unsigned int pixelAmount)
 
     for (unsigned int p = 0; p < LED_COUNT; p += pixelAmount)
     {
+      if (randomColorEach)
+      { //Built in random-color-function
+        menuColor = random(0, 8);
+      }
+
       //Turn all previous LEDs off
       if (p > pixelAmount - 1)
       {
@@ -277,43 +282,8 @@ void racingPixels(unsigned int pixelAmount)
   }
 }
 
-void racingPixelsRandom(unsigned int pixelAmount)
+void strobo(unsigned int pixelAmount)
 {
-  while (true)
-  {
-    for (unsigned int p = 0; p < LED_COUNT; p += pixelAmount)
-    {
-      //Built in random-color-function
-      menuColor = random(0, 8);
-
-      //Turn all previous LEDs off
-      if (p > pixelAmount - 1)
-      {
-        for (unsigned int o = pixelAmount; o > 0; o--)
-        {
-          pixels.setPixelColor(p - o, 0, 0, 0);
-        }
-      }
-
-      //Turn new LEDs on
-      for (unsigned int c = 0; c < pixelAmount; c++)
-      {
-        pixels.setPixelColor(p + c, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
-      }
-
-      pixels.show();
-      if (buttonCheckDelay(SPEEDS[menuSpeed]))
-      {
-        return;
-      }
-    }
-
-    //Turn last LEDs off
-    for (int e = (LED_COUNT - 1) - pixelAmount; e < LED_COUNT; e++)
-    {
-      pixels.setPixelColor(e, 0, 0, 0);
-    }
-  }
 }
 
 boolean buttonCheckDelay(unsigned int delayVal)

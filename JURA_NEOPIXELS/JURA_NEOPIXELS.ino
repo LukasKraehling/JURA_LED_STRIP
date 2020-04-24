@@ -1,7 +1,6 @@
 /*
   TODO:
   o Fix and finish (random segment length) new Strobo-function
-  o Use Pixels.fill as often as possible (refactor)
   o Implement missing modes
   o Add some more colors that have no value under 100 (RGB)
   o Implement random mode-switching
@@ -152,7 +151,7 @@ void loop()
   switch (menuMode)
   {
   case 0: //Single_Color
-    pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
+    pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT - 1);
     pixels.show();
     while (!buttonCheckDelay(100))
     {
@@ -331,6 +330,35 @@ void strobo(unsigned int pixelAmount, boolean switching)
         else
         {
           pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - pixelAmount, i);
+        }
+
+        if ((i + (pixelAmount * 2)) >= LED_COUNT)
+        {
+          for (unsigned int e = i; e < LED_COUNT; e++)
+          {
+            if ((e - i) < pixelAmount)
+            {
+              if (switching && switchState || !switching)
+              {
+                pixels.setPixelColor(e, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+              }
+              else
+              {
+                pixels.setPixelColor(e, 0, 0, 0);
+              }
+            }
+            else
+            {
+              if (switching && switchState || !switching)
+              {
+                pixels.setPixelColor(e, 0, 0, 0);
+              }
+              else
+              {
+                pixels.setPixelColor(e, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+              }
+            }
+          }
         }
       }
       switchState = !switchState;

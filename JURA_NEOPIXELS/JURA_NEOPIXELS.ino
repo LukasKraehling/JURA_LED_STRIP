@@ -1,5 +1,7 @@
 /*
   TODO:
+  o Fix and finish (random segment length) new Strobo-function
+  o Use Pixels.fill as often as possible (refactor)
   o Implement missing modes
   o Add some more colors that have no value under 100 (RGB)
   o Implement random mode-switching
@@ -18,6 +20,7 @@
   x Fix wrong count of button clicks for Speed and Color
   x Prevent loop-clicks
 */
+
 #include <Adafruit_NeoPixel.h>
 #include <SPI.h>
 #include <Wire.h>
@@ -32,7 +35,7 @@
 #define LED_PIN 6
 
 //Button-Constants
-#define BUTTON_INTERVAL 300 // Minimal time that has to pass between two button presses
+#define BUTTON_INTERVAL 250 // Minimal time that has to pass between two button presses
 
 //Color-Constants
 const unsigned int COLORS[9][3] =
@@ -53,7 +56,7 @@ const String COLOR_NAMES[10] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[24] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch [4]", "Strobo Seg. Switch [8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Left", "Stacking Right", "Stacking Both Sides", "Stacking Middle", "Music"};
+const String MODE_NAMES[30] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Left", "Stacking Right", "Stacking Both Sides", "Stacking Middle", "Music", "Random"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -173,36 +176,34 @@ void loop()
   case 6: //Racing_Pixels - Random color per pixel-segment (5 Pixel)
     racingPixels(5, true);
     break;
-  case 7: //Strobo
-    while (!buttonCheckDelay(0))
-    {
-      //For random-color-function
-      if (randomColor != -1)
-      {
-        randomColor = random(0, 8);
-        menuColor = randomColor;
-      }
-
-      for (unsigned int i = 0; i < LED_COUNT; i++)
-      {
-        pixels.setPixelColor(i, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
-      }
-
-      pixels.show();
-      if (buttonCheckDelay(SPEEDS[menuSpeed]))
-      {
-        break;
-      }
-
-      pixels.clear();
-      pixels.show();
-      if (buttonCheckDelay(SPEEDS[menuSpeed]))
-      {
-        break;
-      }
-    }
+  case 7: //Carousel (1 Pixel)
+    carousel(1);
     break;
-  case 8: //Rainbow
+  case 8: //Carousel (3 Pixel)
+    carousel(3);
+    break;
+  case 9: //Carousel (5 Pixel)
+    carousel(5);
+    break;
+  case 10: //Strobo (Full-Strip)
+    strobo(0, false);
+    break;
+  case 11: //Strobo (4 on / 4 off)
+    strobo(4, false);
+    break;
+  case 12: //Strobo (8 on / 8 off)
+    strobo(8, false);
+    break;
+  case 13: //Strobo switching (4 on / 4 off)
+    strobo(4, true);
+    break;
+  case 14: //Strobo switching (8 on / 8 off)
+    strobo(8, true);
+    break;
+  case 15: //Strobo random segment length
+    strobo(100, true);
+    break;
+  case 16: //Rainbow
     for (unsigned int r = 0; r < LED_COUNT; r++)
     {
       pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
@@ -213,7 +214,7 @@ void loop()
     {
     }
     break;
-  case 9: //Rainbow_Refresh
+  case 17: //Rainbow_Refresh
     while (!buttonCheckDelay(SPEEDS[menuSpeed]))
     {
       for (unsigned int r = 0; r < LED_COUNT; r++)
@@ -221,14 +222,12 @@ void loop()
         pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
       }
       pixels.show();
-
-      break;
     }
+    break;
   }
 
   if (menuColor != randomColor && randomColor != -1)
   {
-    Serial.println("Reset Random");
     randomColor = -1;
     menuColor = 0;
   }
@@ -282,8 +281,74 @@ void racingPixels(unsigned int pixelAmount, boolean randomColorEach)
   }
 }
 
-void strobo(unsigned int pixelAmount)
+void carousel(unsigned int pixelAmount)
 {
+  while (!buttonCheckDelay(100))
+  {
+    //For random-color-function
+    if (randomColor != -1)
+    {
+      randomColor = random(0, 8);
+      menuColor = randomColor;
+    }
+  }
+}
+
+void strobo(unsigned int pixelAmount, boolean switching)
+{
+  boolean switchState = false;
+
+  while (!buttonCheckDelay(0))
+  {
+    //For random-color-function
+    if (randomColor != -1)
+    {
+      randomColor = random(0, 8);
+      menuColor = randomColor;
+    }
+
+    if (pixelAmount == 0)
+    {
+      pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
+    }
+    else
+    {
+      for (unsigned int i = 0; i < LED_COUNT; i += (pixelAmount * 2))
+      {
+        if (switching && switchState || !switching)
+        {
+          pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - (pixelAmount * 2), i - pixelAmount);
+        }
+        else
+        {
+          pixels.fill(pixels.Color(0, 0, 0), i - (pixelAmount * 2), i - pixelAmount);
+        }
+
+        if (switching && switchState || !switching)
+        {
+          pixels.fill(pixels.Color(0, 0, 0), i - pixelAmount, i);
+        }
+        else
+        {
+          pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - pixelAmount, i);
+        }
+      }
+      switchState = !switchState;
+    }
+
+    pixels.show();
+    if (buttonCheckDelay(SPEEDS[menuSpeed]))
+    {
+      return;
+    }
+
+    pixels.clear();
+    pixels.show();
+    if (buttonCheckDelay(SPEEDS[menuSpeed]))
+    {
+      return;
+    }
+  }
 }
 
 boolean buttonCheckDelay(unsigned int delayVal)

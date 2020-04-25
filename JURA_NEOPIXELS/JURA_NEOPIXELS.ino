@@ -142,7 +142,7 @@ void loop()
   //For random color-function
   if (menuColor == 9 || randomColor != -1)
   {
-    randomColor = random(0, 8);
+    randomColor = random(0, COLOR_NAMES_SIZE - 1);
     menuColor = randomColor;
   }
 
@@ -239,7 +239,7 @@ void racingPixels(unsigned int pixelAmount, boolean randomColorEach)
     //For random-color-function
     if (randomColor != -1)
     {
-      randomColor = random(0, 8);
+      randomColor = random(0, COLOR_NAMES_SIZE - 1);
       menuColor = randomColor;
     }
 
@@ -287,7 +287,7 @@ void carousel(unsigned int pixelAmount)
     //For random-color-function
     if (randomColor != -1)
     {
-      randomColor = random(0, 8);
+      randomColor = random(0, COLOR_NAMES_SIZE - 1);
       menuColor = randomColor;
     }
   }
@@ -302,13 +302,49 @@ void strobo(unsigned int pixelAmount, boolean switching)
     //For random-color-function
     if (randomColor != -1)
     {
-      randomColor = random(0, 8);
+      randomColor = random(0, COLOR_NAMES_SIZE - 1);
       menuColor = randomColor;
     }
 
     if (pixelAmount == 0)
     {
       pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
+    }
+    else if (pixelAmount == 100 && switching)
+    {
+      unsigned int randomSegLength = random(1, 5);
+
+      for (unsigned int i = 0; i < LED_COUNT; i += randomSegLength)
+      {
+        if (randomColor != -1)
+        {
+          if (switchState)
+          {
+            randomColor = random(0, COLOR_NAMES_SIZE - 1);
+            menuColor = randomColor;
+
+            pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - randomSegLength, i);
+          }
+          else
+          {
+            pixels.fill(pixels.Color(0, 0, 0), i - randomSegLength, i);
+          }
+        }
+        else
+        {
+          if (switchState)
+          {
+            pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - randomSegLength, i);
+          }
+          else
+          {
+            pixels.fill(pixels.Color(0, 0, 0), i - randomSegLength, i);
+          }
+        }
+
+        randomSegLength = random(1, 5);
+        switchState = !switchState;
+      }
     }
     else
     {

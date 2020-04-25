@@ -1,9 +1,9 @@
 /*
   TODO:
-  o Fix and finish (random segment length) new Strobo-function
   o Implement missing modes
   o Add some more colors that have no value under 100 (RGB)
   o Implement random mode-switching
+  x Fix and finish (random segment length) new Strobo-function
   x Fix random-color-mode
   x Make speed and color unchangeable in Rainbow and only color unchangeable in Rainbow_Refresh
   x Find solution for loop-pressing after some time
@@ -306,11 +306,11 @@ void strobo(unsigned int pixelAmount, boolean switching)
       menuColor = randomColor;
     }
 
-    if (pixelAmount == 0)
+    if (pixelAmount == 0) //Full-strip strobo
     {
       pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
     }
-    else if (pixelAmount == 100 && switching)
+    else if (pixelAmount == 100 && switching) //Random-Segment-Length strobo
     {
       unsigned int randomSegLength = random(1, 5);
 
@@ -346,7 +346,7 @@ void strobo(unsigned int pixelAmount, boolean switching)
         switchState = !switchState;
       }
     }
-    else
+    else //Defined-Segment-Length strobo (Sry for this crappy implementation)
     {
       for (unsigned int i = 0; i < LED_COUNT; i += (pixelAmount * 2))
       {

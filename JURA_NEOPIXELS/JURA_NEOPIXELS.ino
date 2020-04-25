@@ -3,6 +3,7 @@
   o Implement missing modes
   o Add some more colors that have no value under 100 (RGB)
   o Implement random mode-switching
+  o Refactor Strobo-function
   x Fix and finish (random segment length) new Strobo-function
   x Fix random-color-mode
   x Make speed and color unchangeable in Rainbow and only color unchangeable in Rainbow_Refresh
@@ -151,7 +152,7 @@ void loop()
   switch (menuMode)
   {
   case 0: //Single_Color
-    pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT - 1);
+    pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), 0, LED_COUNT);
     pixels.show();
     while (!buttonCheckDelay(100))
     {
@@ -282,13 +283,63 @@ void racingPixels(unsigned int pixelAmount, boolean randomColorEach)
 
 void carousel(unsigned int pixelAmount)
 {
-  while (!buttonCheckDelay(100))
+  boolean switchColor = true;
+  unsigned int moveCounter = 0;
+
+  while (!buttonCheckDelay(SPEEDS[menuSpeed]))
   {
-    //For random-color-function
-    if (randomColor != -1)
+    for (unsigned int m = 0; m < moveCounter; m++)
     {
-      randomColor = random(0, COLOR_NAMES_SIZE - 1);
-      menuColor = randomColor;
+      pixels.setPixelColor(m, 0, 0, 0);
+    }
+
+    for (unsigned int c = moveCounter; c < LED_COUNT; c += pixelAmount)
+    {
+      if (switchColor)
+      {
+        //For random-color-function
+        if (randomColor != -1)
+        {
+          randomColor = random(0, COLOR_NAMES_SIZE - 1);
+          menuColor = randomColor;
+        }
+        pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), c - pixelAmount, c);
+      }
+      else
+      {
+        pixels.fill(pixels.Color(0, 0, 0), c - pixelAmount, c);
+      }
+
+      if ((c + pixelAmount) >= LED_COUNT)
+      {
+        for (unsigned int e = c; e < LED_COUNT; e++)
+        {
+          if (switchColor)
+          {
+            pixels.setPixelColor(e, 0, 0, 0);
+          }
+          else
+          {
+            if (randomColor != -1)
+            {
+              randomColor = random(0, COLOR_NAMES_SIZE - 1);
+              menuColor = randomColor;
+            }
+            pixels.setPixelColor(e, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+          }
+        }
+      }
+
+      //To color one segment and turn the following off
+      switchColor = !switchColor;
+    }
+
+    pixels.show();
+
+    moveCounter++;
+    if (moveCounter > pixelAmount)
+    {
+      moveCounter = 0;
     }
   }
 }
@@ -446,7 +497,7 @@ boolean buttonCheckDelay(unsigned int delayVal)
     }
 
     //BTN1 --> Speed up
-    if (((millis() - btn1Pressed) > BUTTON_INTERVAL) && menuMode != 0 && menuMode != 8)
+    if (((millis() - btn1Pressed) > BUTTON_INTERVAL) && menuMode != 0 && menuMode != 17)
     {
       if (btn1State == LOW)
       {
@@ -462,7 +513,7 @@ boolean buttonCheckDelay(unsigned int delayVal)
     }
 
     //BTN2 --> Change Color
-    if (((millis() - btn2Pressed) > BUTTON_INTERVAL) && (menuMode < 4 || menuMode > 6) && menuMode != 8 && menuMode != 9)
+    if (((millis() - btn2Pressed) > BUTTON_INTERVAL) && (menuMode < 4 || menuMode > 6) && menuMode != 17 && menuMode != 18) //!Racing-Pixels-Rd. && !Rainbow && !Rainbowrefresh
     {
       if (btn2State == LOW)
       {

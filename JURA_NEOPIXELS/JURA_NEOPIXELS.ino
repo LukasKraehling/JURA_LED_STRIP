@@ -56,7 +56,7 @@ const String COLOR_NAMES[10] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[30] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Left", "Stacking Right", "Stacking Both Sides", "Stacking Middle", "Music", "Random"};
+const String MODE_NAMES[28] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Start", "Stacking End", "Stacking Both", "Stacking Middle", "Music", "Random"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -222,6 +222,56 @@ void loop()
         pixels.setPixelColor(r, random(0, 255), random(0, 255), random(0, 255));
       }
       pixels.show();
+    }
+    break;
+  case 18: //Comets
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 19: //Comets Random
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 20: //Fire
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 21: //Stars
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 22: //Stacking Start
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 23: //Stacking End
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 24: //Stacking Both
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 25: //Stacking Middle
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 26: //Music
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 27: //Random
+    while (!buttonCheckDelay(100))
+    {
     }
     break;
   }

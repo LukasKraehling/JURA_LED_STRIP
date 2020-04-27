@@ -1,6 +1,10 @@
 /*
   TODO:
-  o Implement missing modes
+  o Implement star-effect
+  o Implement comet-effects
+  o Implement stacking-effects
+  o Implement fire-effect
+  o Implement music-effect
   o Add some more colors that have no value under 100 (RGB)
   o Implement random mode-switching
   o Refactor Strobo-function
@@ -56,7 +60,7 @@ const String COLOR_NAMES[10] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[28] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Comets", "Comets Random", "Fire", "Stars", "Stacking Start", "Stacking End", "Stacking Both", "Stacking Middle", "Music", "Random"};
+const String MODE_NAMES[28] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", , "Stacking Start", "Stacking End", "Stacking Both", "Stacking Middle", "Comets", "Comets Random", "Fire", "Stars", "Music", "Random"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -224,42 +228,41 @@ void loop()
       pixels.show();
     }
     break;
-  case 18: //Comets
+  case 18: //Stacking Start
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 19: //Comets Random
+  case 19: //Stacking End
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 20: //Fire
+  case 20: //Stacking Both
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 21: //Stars
+  case 21: //Stacking Middle
+    while (!buttonCheckDelay(100))
+    {
+    }
+  case 22: //Comets
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 22: //Stacking Start
+  case 23: //Comets Random
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 23: //Stacking End
+  case 24: //Fire
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 24: //Stacking Both
-    while (!buttonCheckDelay(100))
-    {
-    }
-    break;
-  case 25: //Stacking Middle
+  case 25: //Stars
     while (!buttonCheckDelay(100))
     {
     }

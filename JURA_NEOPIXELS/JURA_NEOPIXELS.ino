@@ -60,7 +60,7 @@ const String COLOR_NAMES[10] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[28] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", , "Stacking Start", "Stacking End", "Stacking Both", "Stacking Middle", "Comets", "Comets Random", "Fire", "Stars", "Music", "Random"};
+const String MODE_NAMES[28] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Stacking Start", "Stacking End", "Stacking Both", "Stacking Middle", "Comets", "Comets Random", "Fire", "Stars", "Music", "Random"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -229,9 +229,7 @@ void loop()
     }
     break;
   case 18: //Stacking Start
-    while (!buttonCheckDelay(100))
-    {
-    }
+    stackingStart(1);
     break;
   case 19: //Stacking End
     while (!buttonCheckDelay(100))
@@ -397,6 +395,62 @@ void carousel(unsigned int pixelAmount)
   }
 }
 
+void stackingStart(unsigned int pixelAmount)
+{
+  unsigned int pixelSum = pixelAmount;
+
+  while (true)
+  {
+    //For random-color-function
+    if (randomColor != -1)
+    {
+      randomColor = random(0, COLOR_NAMES_SIZE - 1);
+      menuColor = randomColor;
+    }
+
+    //Racing-Pixel from end to start
+    for (unsigned int p = LED_COUNT - 1; p > pixelSum; p -= pixelAmount)
+    {
+      pixels.setPixelColor(p, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      pixels.show();
+      if (buttonCheckDelay(SPEEDS[menuSpeed]))
+      {
+        return;
+      }
+      pixels.setPixelColor(p, 0, 0, 0);
+      pixels.show();
+
+      //Show PixelSum (Added-Up Pixels at the start of the LED-Strip)
+      if ((p - pixelAmount) <= pixelSum)
+      {
+        if ((pixelSum + pixelAmount) >= LED_COUNT)
+        {
+          for (unsigned int s = pixelSum - pixelAmount; s < LED_COUNT; s++)
+          {
+            pixels.setPixelColor(s, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+          }
+        }
+        else
+        {
+          for (unsigned int s = pixelSum - pixelAmount; s < pixelSum; s++)
+          {
+            pixels.setPixelColor(s, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+          }
+        }
+
+        pixels.show();
+      }
+    }
+
+    //Add up pixel count and reset if all pixels are colored
+    pixelSum += pixelAmount;
+    if (pixelSum >= LED_COUNT)
+    {
+      pixelSum = 0;
+    }
+  }
+}
+
 void strobo(unsigned int pixelAmount, boolean switching)
 {
   boolean switchState = false;
@@ -550,7 +604,7 @@ boolean buttonCheckDelay(unsigned int delayVal)
     }
 
     //BTN1 --> Speed up
-    if (((millis() - btn1Pressed) > BUTTON_INTERVAL) && menuMode != 0 && menuMode != 17)
+    if (((millis() - btn1Pressed) > BUTTON_INTERVAL) && menuMode != 0 && menuMode != 16)
     {
       if (btn1State == LOW)
       {
@@ -566,7 +620,7 @@ boolean buttonCheckDelay(unsigned int delayVal)
     }
 
     //BTN2 --> Change Color
-    if (((millis() - btn2Pressed) > BUTTON_INTERVAL) && (menuMode < 4 || menuMode > 6) && menuMode != 17 && menuMode != 18) //!Racing-Pixels-Rd. && !Rainbow && !Rainbowrefresh
+    if (((millis() - btn2Pressed) > BUTTON_INTERVAL) && (menuMode < 4 || menuMode > 6) && menuMode != 16 && menuMode != 17) //!Racing-Pixels-Rd. && !Rainbow && !Rainbowrefresh
     {
       if (btn2State == LOW)
       {

@@ -1,6 +1,6 @@
 /*
   TODO:
-  o Create separate random-color function to slim-down the code
+  o Create separate random-color function to slim-down the code + No duplicate random colors after each other
   o Implement star-effect
   o Implement comet-effects
   o Implement stacking-effects

@@ -1,12 +1,12 @@
 /*
   TODO:
-  o Create separate random-color function to slim-down the code + No duplicate random colors after each other
   o Implement star-effect
   o Implement comet-effects
   o Implement stacking-effects
   o Implement fire-effect
   o Implement music-effect
   o Implement random mode-switching
+  x Create separate random-color function to slim-down the code + No duplicate random colors after each other
   x Add some more colors that have no value under 100 (RGB)
   x Fix and finish (random segment length) new Strobo-function
   x Fix random-color-mode
@@ -150,8 +150,7 @@ void loop()
   //For random color-function
   if (menuColor == (COLOR_NAMES_SIZE - 1) || randomColor != -1)
   {
-    randomColor = random(0, COLOR_NAMES_SIZE - 1);
-    menuColor = randomColor;
+    refreshRandomColor(false);
   }
 
   refreshOLED();
@@ -297,12 +296,7 @@ void racingPixels(unsigned int pixelAmount, boolean randomColorEach)
 {
   while (true)
   {
-    //For random-color-function
-    if (randomColor != -1)
-    {
-      randomColor = random(0, COLOR_NAMES_SIZE - 1);
-      menuColor = randomColor;
-    }
+    refreshRandomColor(true);
 
     for (unsigned int p = 0; p < LED_COUNT; p += pixelAmount)
     {
@@ -357,12 +351,8 @@ void carousel(unsigned int pixelAmount)
     {
       if (switchColor)
       {
-        //For random-color-function
-        if (randomColor != -1)
-        {
-          randomColor = random(0, COLOR_NAMES_SIZE - 1);
-          menuColor = randomColor;
-        }
+        refreshRandomColor(true);
+
         pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), c - pixelAmount, c);
       }
       else
@@ -380,11 +370,8 @@ void carousel(unsigned int pixelAmount)
           }
           else
           {
-            if (randomColor != -1)
-            {
-              randomColor = random(0, COLOR_NAMES_SIZE - 1);
-              menuColor = randomColor;
-            }
+            refreshRandomColor(true);
+
             pixels.setPixelColor(e, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
           }
         }
@@ -410,12 +397,7 @@ void stackingStart(unsigned int pixelAmount)
 
   while (true)
   {
-    //For random-color-function
-    if (randomColor != -1)
-    {
-      randomColor = random(0, COLOR_NAMES_SIZE - 1);
-      menuColor = randomColor;
-    }
+    refreshRandomColor(true);
 
     //Racing-Pixel from end to start
     for (unsigned int p = LED_COUNT - 1; p > pixelSum; p -= pixelAmount)
@@ -475,12 +457,7 @@ void strobo(unsigned int pixelAmount, boolean switching)
 
   while (!buttonCheckDelay(0))
   {
-    //For random-color-function
-    if (randomColor != -1)
-    {
-      randomColor = random(0, COLOR_NAMES_SIZE - 1);
-      menuColor = randomColor;
-    }
+    refreshRandomColor(true);
 
     if (pixelAmount == 0) //Full-strip strobo
     {
@@ -496,8 +473,7 @@ void strobo(unsigned int pixelAmount, boolean switching)
         {
           if (switchState)
           {
-            randomColor = random(0, COLOR_NAMES_SIZE - 1);
-            menuColor = randomColor;
+            refreshRandomColor(false);
 
             pixels.fill(pixels.Color(COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]), i - randomSegLength, i);
           }
@@ -761,6 +737,32 @@ void refreshOLED()
 
   //Show prepared OLED-content
   display.display();
+}
+
+void refreshRandomColor(boolean stdMode)
+{
+  unsigned int newColor = random(0, COLOR_NAMES_SIZE - 1);
+
+  if (stdMode && randomColor != -1)
+  {
+    while (newColor == randomColor)
+    {
+      newColor = random(0, COLOR_NAMES_SIZE - 1);
+    }
+
+    randomColor = newColor;
+    menuColor = randomColor;
+  }
+  else if (!stdMode)
+  {
+    while (newColor == randomColor)
+    {
+      newColor = random(0, COLOR_NAMES_SIZE - 1);
+    }
+
+    randomColor = newColor;
+    menuColor = randomColor;
+  }
 }
 
 unsigned int centerText(String text, unsigned int size)

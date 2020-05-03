@@ -239,46 +239,68 @@ void loop()
   case 20: //Stacking Start (5 Pixel)
     stackingStart(5);
     break;
-  case 21: //Stacking End
+  case 21: //Stacking End (1 Pixel)
+    stackingEnd(1);
+    break;
+  case 22: //Stacking End (3 Pixel)
+    stackingEnd(3);
+    break;
+  case 23: //Stacking End (5 Pixel)
+    stackingEnd(5);
+    break;
+  case 24: //Stacking Both (1 Pixel)
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 22: //Stacking Both
+  case 25: //Stacking Both (3 Pixel)
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 23: //Stacking Middle
-    while (!buttonCheckDelay(100))
-    {
-    }
-  case 24: //Comets
+  case 26: //Stacking Both (5 Pixel)
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 25: //Comets Random
+  case 27: //Stacking Middle (1 Pixel)
+    while (!buttonCheckDelay(100))
+    {
+    }
+  case 28: //Stacking Middle (3 Pixel)
+    while (!buttonCheckDelay(100))
+    {
+    }
+  case 29: //Stacking Middle (5 Pixel)
+    while (!buttonCheckDelay(100))
+    {
+    }
+  case 30: //Comets
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 26: //Fire
+  case 31: //Comets Random
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 27: //Stars
+  case 32: //Fire
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 28: //Music
+  case 33: //Stars
     while (!buttonCheckDelay(100))
     {
     }
     break;
-  case 29: //Random
+  case 34: //Music
+    while (!buttonCheckDelay(100))
+    {
+    }
+    break;
+  case 35: //Random
     while (!buttonCheckDelay(100))
     {
     }

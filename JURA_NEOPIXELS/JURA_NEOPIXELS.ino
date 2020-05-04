@@ -1,5 +1,6 @@
 /*
   TODO:
+  o Refactor stacking start
   o Implement star-effect
   o Implement comet-effects
   o Implement stacking-effects
@@ -63,7 +64,10 @@ const String COLOR_NAMES[13] = {"White", "Red", "Green", "Blue", "Yellow", "Cyan
 const unsigned int COLOR_NAMES_SIZE = sizeof COLOR_NAMES / sizeof COLOR_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Mode-Name-Constants
-const String MODE_NAMES[30] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]", "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Stacking Start[1]", "Stacking Start[3]", "Stacking Start[5]", "Stacking End", "Stacking Both", "Stacking Middle", "Comets", "Comets Random", "Fire", "Stars", "Music", "Random"};
+const String MODE_NAMES[36] = {"Single Color", "Racing Pixels[1]", "Racing Pixels[3]", "Racing Pixels[5]", "Racing Pixels Rd.[1]", "Racing Pixels Rd.[3]", "Racing Pixels Rd.[5]", "Carousel [1]", "Carousel [3]", "Carousel [5]",
+                               "Strobo", "Strobo Segments[4]", "Strobo Segments[8]", "Strobo Seg. Switch[4]", "Strobo Seg. Switch[8]", "Strobo Segments Rd.", "Rainbow", "Rainbow Refresh", "Stacking Start[1]", "Stacking Start[3]",
+                               "Stacking Start[5]", "Stacking End[1]", "Stacking End[3]", "Stacking End[5]", "Stacking Both[1]", "Stacking Both[3]", "Stacking Both[5]",
+                               "Stacking Middle [1]", "Stacking Middle [3]", "Stacking Middle [5]", "Comets Random", "Fire", "Stars", "Music", "Random"};
 const unsigned int MODE_NAMES_SIZE = sizeof MODE_NAMES / sizeof MODE_NAMES[0]; //Devides length of array(first dimension -> 0) / size of datatype
 
 //Speed-Constants
@@ -468,6 +472,56 @@ void stackingStart(unsigned int pixelAmount)
     if (pixelSum >= LED_COUNT)
     {
       pixelSum = pixelAmount;
+      pixels.clear();
+    }
+  }
+}
+
+void stackingEnd(unsigned int pixelAmount)
+{
+  unsigned int pixelSum = 0;
+
+  while (true)
+  {
+    refreshRandomColor(true);
+
+    //Racing-Pixel from end to start
+    for (unsigned int p = 0; p < ((LED_COUNT - 1) - pixelSum) && ((LED_COUNT - 1) - pixelSum) >= pixelAmount; p += pixelAmount)
+    {
+      for (unsigned int r = p; r <= (p + (pixelAmount - 1)); r++)
+      {
+        pixels.setPixelColor(r, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      }
+      pixels.show();
+
+      if (buttonCheckDelay(SPEEDS[menuSpeed]))
+      {
+        return;
+      }
+
+      for (unsigned int r = p; r <= p + (pixelAmount - 1); r++)
+      {
+        pixels.setPixelColor(r, 0, 0, 0);
+      }
+      pixels.show();
+
+      //Show PixelSum (Added-Up Pixels at the end of the LED-Strip)
+      if ((p + pixelAmount) >= ((LED_COUNT - 1) - pixelSum))
+      {
+        for (unsigned int s = p + (pixelAmount - 1); s >= p; s--)
+        {
+          pixels.setPixelColor(s, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+        }
+
+        pixels.show();
+      }
+    }
+
+    //Add up pixel count and reset if all pixels are colored
+    pixelSum += pixelAmount;
+    if (pixelSum >= LED_COUNT)
+    {
+      pixelSum = 0;
       pixels.clear();
     }
   }

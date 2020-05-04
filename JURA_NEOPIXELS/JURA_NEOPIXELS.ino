@@ -1,6 +1,5 @@
 /*
   TODO:
-  o Refactor stacking start
   o Implement star-effect
   o Implement comet-effects
   o Implement stacking-effects
@@ -486,7 +485,7 @@ void stackingEnd(unsigned int pixelAmount)
     refreshRandomColor(true);
 
     //Racing-Pixel from end to start
-    for (unsigned int p = 0; p < ((LED_COUNT - 1) - pixelSum) && ((LED_COUNT - 1) - pixelSum) >= pixelAmount; p += pixelAmount)
+    for (unsigned int p = 0; p < ((LED_COUNT - 1) - pixelSum); p += pixelAmount)
     {
       for (unsigned int r = p; r <= (p + (pixelAmount - 1)); r++)
       {
@@ -508,9 +507,9 @@ void stackingEnd(unsigned int pixelAmount)
       //Show PixelSum (Added-Up Pixels at the end of the LED-Strip)
       if ((p + pixelAmount) >= ((LED_COUNT - 1) - pixelSum))
       {
-        for (unsigned int s = p + (pixelAmount - 1); s >= p; s--)
+        for (unsigned int r = p; r <= (p + (pixelAmount - 1)); r++)
         {
-          pixels.setPixelColor(s, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+          pixels.setPixelColor(r, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
         }
 
         pixels.show();

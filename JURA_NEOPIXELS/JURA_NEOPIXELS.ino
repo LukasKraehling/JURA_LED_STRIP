@@ -100,7 +100,7 @@ unsigned long btn3Pressed = 0;
 unsigned int menuBrightness = 50;
 unsigned int menuSpeed = 0;
 unsigned int menuColor = 0;
-unsigned int menuMode = 0;
+unsigned int menuMode = 24;
 
 //Variable to indicate that random-color-mode is active
 int randomColor = -1;
@@ -252,19 +252,13 @@ void loop()
     stackingEnd(5);
     break;
   case 24: //Stacking Both (1 Pixel)
-    while (!buttonCheckDelay(100))
-    {
-    }
+    stackingBoth(1);
     break;
   case 25: //Stacking Both (3 Pixel)
-    while (!buttonCheckDelay(100))
-    {
-    }
+    stackingBoth(3);
     break;
   case 26: //Stacking Both (5 Pixel)
-    while (!buttonCheckDelay(100))
-    {
-    }
+    stackingBoth(5);
     break;
   case 27: //Stacking Middle (1 Pixel)
     while (!buttonCheckDelay(100))
@@ -514,6 +508,59 @@ void stackingEnd(unsigned int pixelAmount)
 
         pixels.show();
       }
+    }
+
+    //Add up pixel count and reset if all pixels are colored
+    pixelSum += pixelAmount;
+    if (pixelSum >= LED_COUNT)
+    {
+      pixelSum = 0;
+      pixels.clear();
+    }
+  }
+}
+
+void stackingBoth(unsigned int pixelAmount)
+{
+  unsigned int pixelSum = 0;
+  unsigned int middle = (LED_COUNT - 1) / 2;
+
+  while (true)
+  {
+    refreshRandomColor(true);
+
+    //2 Racing-Pixels from middle to start and to end
+    for (unsigned int u = 0; u < middle; u += pixelAmount)
+    {
+      //Switch on current pixel(s)
+      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--)
+      {
+        pixels.setPixelColor(p1, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      }
+
+      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2--)
+      {
+        pixels.setPixelColor(p2, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      }
+      pixels.show();
+
+      //Wait for set time
+      if (buttonCheckDelay(SPEEDS[menuSpeed]))
+      {
+        return;
+      }
+
+      //Switch off current pixel(s)
+      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--)
+      {
+        pixels.setPixelColor(p1, 0, 0, 0);
+      }
+
+      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2--)
+      {
+        pixels.setPixelColor(p2, 0, 0, 0);
+      }
+      pixels.show();
     }
 
     //Add up pixel count and reset if all pixels are colored

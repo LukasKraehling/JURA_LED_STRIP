@@ -6,6 +6,7 @@
   o Implement fire-effect
   o Implement music-effect
   o Implement random mode-switching
+  o Commenting
   x Create separate random-color function to slim-down the code + No duplicate random colors after each other
   x Add some more colors that have no value under 100 (RGB)
   x Fix and finish (random segment length) new Strobo-function
@@ -533,12 +534,12 @@ void stackingBoth(unsigned int pixelAmount)
     for (unsigned int u = 0; u < middle; u += pixelAmount)
     {
       //Switch on current pixel(s)
-      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--)
+      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--) //From middle to strip-start
       {
         pixels.setPixelColor(p1, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
       }
 
-      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2--)
+      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2++) //From middle to strip-end
       {
         pixels.setPixelColor(p2, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
       }

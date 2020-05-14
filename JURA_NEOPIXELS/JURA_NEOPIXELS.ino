@@ -1,8 +1,10 @@
 /*
   TODO:
+  o Test stackingBoth completely
+  o Port stackingStart & stackingEnd to use steps of one pixel like in stackingBoth
+  o Implement stacking-effects
   o Implement star-effect
   o Implement comet-effects
-  o Implement stacking-effects
   o Implement fire-effect
   o Implement music-effect
   o Implement random mode-switching
@@ -524,22 +526,21 @@ void stackingEnd(unsigned int pixelAmount)
 void stackingBoth(unsigned int pixelAmount)
 {
   unsigned int pixelSum = 0;
-  unsigned int middle = (LED_COUNT - 1) / 2;
+  unsigned int middle = LED_COUNT / 2;
 
   while (true)
   {
     refreshRandomColor(true);
 
     //2 Racing-Pixels from middle to start and to end
-    for (unsigned int u = 0; u < middle; u += pixelAmount)
+    for (unsigned int masterCounter = 0; masterCounter < middle - pixelSum - 1; masterCounter++)
     {
       //Switch on current pixel(s)
-      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--) //From middle to strip-start
+      for (unsigned int p1 = middle - masterCounter; p1 >= middle - masterCounter - (pixelAmount - 1) && p1 > 0; p1--)
       {
         pixels.setPixelColor(p1, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
       }
-
-      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2++) //From middle to strip-end
+      for (unsigned int p2 = middle + masterCounter; p2 <= middle + masterCounter + (pixelAmount - 1) && p2 < LED_COUNT; p2++)
       {
         pixels.setPixelColor(p2, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
       }
@@ -552,24 +553,35 @@ void stackingBoth(unsigned int pixelAmount)
       }
 
       //Switch off current pixel(s)
-      for (unsigned int p1 = middle - u; p1 >= middle - u - (pixelAmount - 1); p1--)
+      for (unsigned int p1 = middle - masterCounter; p1 >= middle - masterCounter - (pixelAmount - 1) && p1 > 0; p1--)
       {
         pixels.setPixelColor(p1, 0, 0, 0);
       }
-
-      for (unsigned int p2 = middle + u; p2 <= middle + u + (pixelAmount - 1); p2--)
+      for (unsigned int p2 = middle + masterCounter; p2 <= middle + masterCounter + (pixelAmount - 1) && p2 < LED_COUNT; p2++)
       {
         pixels.setPixelColor(p2, 0, 0, 0);
       }
       pixels.show();
     }
 
-    //Add up pixel count and reset if all pixels are colored
+    //Add up pixel amount and reset if all pixels are colored
     pixelSum += pixelAmount;
-    if (pixelSum >= LED_COUNT)
+    if (pixelSum >= LED_COUNT / 2)
     {
       pixelSum = 0;
       pixels.clear();
+    }
+    else //Show added up Pixels on each side
+    {
+      for (unsigned int left = 0; left < pixelSum; left++)
+      {
+        pixels.setPixelColor(left, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      }
+      for (unsigned int right = LED_COUNT - 1; right > LED_COUNT - 1 - pixelSum; right--)
+      {
+        pixels.setPixelColor(right, COLORS[menuColor][0], COLORS[menuColor][1], COLORS[menuColor][2]);
+      }
+      pixels.show();
     }
   }
 }

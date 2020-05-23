@@ -1,6 +1,6 @@
 /*
   TODO:
-  o Test stackingBoth completely
+  o Fix flickering on the end of each segment-motion
   o Port stackingStart & stackingEnd to use steps of one pixel like in stackingBoth
   o Implement stacking-effects
   o Implement star-effect
@@ -9,6 +9,7 @@
   o Implement music-effect
   o Implement random mode-switching
   o Commenting
+  x Test stackingBoth completely
   x Create separate random-color function to slim-down the code + No duplicate random colors after each other
   x Add some more colors that have no value under 100 (RGB)
   x Fix and finish (random segment length) new Strobo-function
